@@ -2,15 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import { getEnvVar } from './utils/getEnvVar.js';
 import contactRouter from './routes/contacts.js';
-import { logger } from './middlewares/logger.js';
+import { logMiddleware } from './middlewares/logger.js';  // Використовуємо logMiddleware
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 export const setupServer = () => {
   const app = express();
 
-  // Використовуємо logger як middleware для логування запитів
-  app.use(logger);
+  // Використовуємо logMiddleware для логування
+  app.use(logMiddleware);
 
   app.use(cors());
 

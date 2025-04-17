@@ -5,3 +5,8 @@ export const logger = pino({
     target: 'pino-pretty',
   },
 });
+
+export const logMiddleware = (req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+};

@@ -9,6 +9,9 @@ import { errorHandler } from './middlewares/errorHandler.js';
 export const setupServer = () => {
   const app = express();
 
+  // Використовуємо logger як middleware для логування запитів
+  app.use(logger);
+
   app.use(cors());
 
   app.use(
@@ -18,12 +21,13 @@ export const setupServer = () => {
     }),
   );
 
-  app.get(logger);
-
+  // Маршрут для контактів
   app.use('/contacts', contactRouter);
 
-  app.get(notFoundHandler);
+  // Обробка запитів, яких не існує
+  app.use(notFoundHandler);
 
+  // Обробка помилок
   app.use(errorHandler);
 
   const port = Number(getEnvVar('PORT', 3000));

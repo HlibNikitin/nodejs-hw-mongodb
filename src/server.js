@@ -1,31 +1,35 @@
 import express from 'express';
+import pino from 'pino-http';
 import cors from 'cors';
 import { getEnvVar } from './utils/getEnvVar.js';
-import contactRouter from './routes/contacts.js';
-import { logger } from './middlewares/logger.js';
+import router from './routers/contacts.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+
+const PORT = Number(getEnvVar('PORT', '3000'));
 
 export const setupServer = () => {
   const app = express();
 
+  app.use(express.json());
+
   app.use(cors());
 
   app.use(
-    express.json({
-      type: ['application/json', 'application/vnd.api+json'],
-      limit: '100kb',
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
     }),
   );
 
-  app.get(logger);
+  app.use(router);
 
-  app.use('/contacts', contactRouter);
-
-  app.get(notFoundHandler);
+  app.use('*', notFoundHandler);
 
   app.use(errorHandler);
 
-  const port = Number(getEnvVar('PORT', 3000));
-  app.listen(port, () => console.log(`Server starting on ${port} port`));
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 };

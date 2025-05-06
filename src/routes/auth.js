@@ -6,7 +6,6 @@ import {
   requestResetEmailSchema,
   resetPasswordSchema,
 } from '../validation/auth.js';
-import { ctrlController } from '../utils/ctrlWrapper.js';
 import {
   loginUserController,
   logoutUserController,
@@ -15,35 +14,35 @@ import {
   requestResetEmailController,
   resetPasswordController,
 } from '../controllers/auth.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
-const router = Router();
+const userRouter = Router();
 
-router.post(
+userRouter.post(
   '/register',
   validateBody(registerUserSchema),
-  ctrlController(registerUserController),
+  ctrlWrapper(registerUserController),
 );
 
-router.post(
+userRouter.post(
   '/login',
   validateBody(loginUserSchema),
-  ctrlController(loginUserController),
+  ctrlWrapper(loginUserController),
 );
 
-router.post('/refresh', ctrlController(refreshUserSessionController));
+userRouter.post('/logout', ctrlWrapper(logoutUserController));
+userRouter.post('/refresh', ctrlWrapper(refreshUserSessionController));
 
-router.post('/logout', ctrlController(logoutUserController));
-
-router.post(
+userRouter.post(
   '/send-reset-email',
   validateBody(requestResetEmailSchema),
-  ctrlController(requestResetEmailController),
+  ctrlWrapper(requestResetEmailController),
 );
 
-router.post(
+userRouter.post(
   '/reset-pwd',
   validateBody(resetPasswordSchema),
-  ctrlController(resetPasswordController),
+  ctrlWrapper(resetPasswordController),
 );
 
-export default router;
+export default userRouter;

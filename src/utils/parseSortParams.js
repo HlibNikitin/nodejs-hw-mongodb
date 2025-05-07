@@ -1,31 +1,33 @@
-import { SORT_ORDER } from "../constants/contacts-constants.js";
+import { SORT_ORDER } from '../constants/contacts.js';
 
 const parseSortOrder = (sortOrder) => {
-    const isKnownOrder = [SORT_ORDER.ASC, SORT_ORDER.DESC].includes(sortOrder);
-    if (isKnownOrder) {
-        return sortOrder;
-    }
-    return SORT_ORDER.ASC;
+  const isKnownOrder = [SORT_ORDER.ASC, SORT_ORDER.DESC].includes(sortOrder);
+  if (isKnownOrder) {
+    return sortOrder;
+  }
+  return SORT_ORDER.ASC;
 };
 
 const parseSortBy = (sortBy) => {
-    const keysOfStudent = [
-        'name',
-    ];
-
-    if (keysOfStudent.includes(sortBy)) {
-        return sortBy;
-    }
-    return '_id';
+  const keyOfContact = [
+    '_id',
+    'name',
+    'phoneNumber',
+    'email',
+    'isFavourite',
+    'contactType',
+  ];
+  if (keyOfContact.includes(sortBy)) {
+    return sortBy;
+  }
+  return 'name';
 };
 
 export const parseSortParams = (query) => {
-    const {sortOrder, sortBy} = query;
-    const parsedSortOrder = parseSortOrder(sortOrder);
-    const parsedSortBy = parseSortBy(sortBy);
+  const { sortOrder, sortBy } = query;
 
-    return {
-        sortOrder: parsedSortOrder,
-        sortBy: parsedSortBy,
-    };
+  const parsedSortOrder = parseSortOrder(sortOrder);
+  const parsedSortBy = parseSortBy(sortBy);
+
+  return { sortOrder: parsedSortOrder, sortBy: parsedSortBy };
 };

@@ -1,52 +1,48 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
-const { storage } = require('../cloudinary');
-const upload = multer({ storage });
-const Contact = require('../models/Contact');
+import { Router } from 'express';
+import {
+  getAllContactsController,
+  getContactByIdController,
+  createContactController,
+  patchContactController,
+  deleteContactController,
+} from '../controllers/contacts.js';
+import { ctrlController } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../validation/contacts.js';
+import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/multer.js';
 
-// Створення контакту з фото
-router.post('/contacts', upload.single('photo'), async (req, res) => {
-  try {
-    const { name, email, phone } = req.body;
-    const photoUrl = req.file?.path;
+const router = Router();
 
-    const newContact = new Contact({
-      name,
-      email,
-      phone,
-      photo: photoUrl,
-    });
+router.use(authenticate);
 
-    await newContact.save();
-    res.status(201).json(newContact);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to create contact' });
-  }
-});
+router.get('/', ctrlController(getAllContactsController));
 
-// Оновлення контакту з можливістю змінити фото
-router.patch('/contacts/:contactId', upload.single('photo'), async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const updateData = req.body;
+router.get('/:contactId', isValidId, ctrlController(getContactByIdController));
 
-    if (req.file) {
-      updateData.photo = req.file.path;
-    }
+router.post(
+  '/',
+  upload.single('photo'),
+  validateBody(createContactSchema),
+  ctrlController(createContactController),
+);
 
-    const updatedContact = await Contact.findByIdAndUpdate(contactId, updateData, {
-      new: true,
-    });
+router.patch(
+  '/:contactId',
+  upload.single('photo'),
+  isValidId,
+  validateBody(updateContactSchema),
+  ctrlController(patchContactController),
+);
 
-    if (!updatedContact) return res.status(404).json({ message: 'Contact not found' });
+router.delete(
+  '/:contactId',
+  isValidId,
+  ctrlController(deleteContactController),
+);
 
-    res.status(200).json(updatedContact);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update contact' });
-  }
-});
-
-module.exports = router;
+export default router;

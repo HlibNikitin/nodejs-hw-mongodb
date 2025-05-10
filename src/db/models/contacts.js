@@ -1,6 +1,7 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import { contactType } from '../../constants/contacts.js';
 
-const contactsSchema = new Schema(
+const contactsShema = new Schema(
   {
     name: {
       type: String,
@@ -21,9 +22,9 @@ const contactsSchema = new Schema(
     },
     contactType: {
       type: String,
-      required: true,
-      enum: ['work', 'home', 'personal'],
-      default: 'personal',
+      enum: contactType,
+      required: false,
+      default: contactType[2],
     },
     userId: {
       type: Schema.Types.ObjectId,
@@ -37,4 +38,4 @@ const contactsSchema = new Schema(
   },
 );
 
-export const ContactsCollection = model('contacts', contactsSchema);
+export const ContactsCollection = model('contacts', contactsShema);

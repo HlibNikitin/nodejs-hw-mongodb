@@ -1,25 +1,19 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-import validator from 'validator';
-
-const usersSchema = new Schema(
+const usersShema = new Schema(
   {
     name: { type: String, required: true },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      validate: [validator.isEmail, 'Invalid email format'],
-    },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    userId: { type: String },
   },
   { timestamps: true, versionKey: false },
 );
 
-usersSchema.methods.toJSON = function () {
+usersShema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
 };
 
-export const UsersCollection = model('users', usersSchema);
+export const UsersCollection = model('users', usersShema);

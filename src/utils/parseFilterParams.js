@@ -1,13 +1,25 @@
-const parseFavourite = (isFavourite) => {
-  if (typeof isFavourite === 'string') {
-    if (isFavourite.toLowerCase() === 'true') return true;
-    if (isFavourite.toLowerCase() === 'false') return false;
-  }
+const parseType = (type) => {
+  const isString = typeof type === 'string';
+  if (!isString) return;
+  const isType = (type) => ['work', 'home', 'personal'].includes(type);
+
+  if (isType(type)) return type;
+};
+
+const parseisFavourite = (isFavourite) => {
+  if (isFavourite === 'true' || isFavourite === '1') return true;
+  if (isFavourite === 'false' || isFavourite === '0') return false;
   return undefined;
 };
 
 export const parseFilterParams = (query) => {
-  const { isFavourite } = query;
-  const parsedIsFavourite = parseFavourite(isFavourite);
-  return { isFavourite: parsedIsFavourite };
+  const { type, isFavourite } = query;
+
+  const parsedType = parseType(type);
+  const parsedisFavourite = parseisFavourite(isFavourite);
+
+  return {
+    type: parsedType,
+    isFavourite: parsedisFavourite,
+  };
 };

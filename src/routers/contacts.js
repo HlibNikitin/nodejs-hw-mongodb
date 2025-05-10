@@ -1,68 +1,48 @@
+import { Router } from 'express';
 import {
-  createContactController,
-  deleteContactController,
+  getAllContactsController,
   getContactByIdController,
-  getContactsController,
+  createContactController,
   patchContactController,
-  upsertContactController,
+  deleteContactController,
 } from '../controllers/contacts.js';
+import { ctrlController } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
 import {
   createContactSchema,
   updateContactSchema,
-} from '../validation/contact.js';
-
-import { Router } from 'express';
-import { authenticate } from '../middlewares/authenticate.js';
-import { checkUser } from '../middlewares/checkUser.js';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+} from '../validation/contacts.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
-import { validBody } from '../middlewares/validBody.js';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', checkUser(), ctrlWrapper(getContactsController));
+router.get('/', ctrlController(getAllContactsController));
 
-router.get(
-  '/:contactId',
-  checkUser(),
-  isValidId,
-  ctrlWrapper(getContactByIdController),
-);
+router.get('/:contactId', isValidId, ctrlController(getContactByIdController));
 
 router.post(
   '/',
-  checkUser(),
   upload.single('photo'),
-  validBody(createContactSchema),
-  ctrlWrapper(createContactController),
-);
-
-router.delete(
-  '/:contactId',
-  checkUser(),
-  isValidId,
-  ctrlWrapper(deleteContactController),
-);
-
-router.put(
-  '/:contactId',
-  checkUser(),
-  isValidId,
-  upload.single('photo'),
-  validBody(createContactSchema),
-  ctrlWrapper(upsertContactController),
+  validateBody(createContactSchema),
+  ctrlController(createContactController),
 );
 
 router.patch(
   '/:contactId',
-  checkUser(),
-  isValidId,
   upload.single('photo'),
-  validBody(updateContactSchema),
-  ctrlWrapper(patchContactController),
+  isValidId,
+  validateBody(updateContactSchema),
+  ctrlController(patchContactController),
+);
+
+router.delete(
+  '/:contactId',
+  isValidId,
+  ctrlController(deleteContactController),
 );
 
 export default router;

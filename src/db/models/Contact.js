@@ -1,49 +1,42 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from "mongoose";
+import { typeList } from "../../constants/contacts.js";
 
-const contactSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
+const contactsSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        phoneNumber: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+        },
+        isFavourite: {
+            type: Boolean,
+            default: false,
+        },
+        contactType: {
+            type: String,
+            enum: typeList,
+            required: true,
+            default: typeList[2],
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
+        photo: {
+            type: String
+        },
     },
-    phoneNumber: {
-      type: String,
-      required: true,
+    {
+        timestamps: true,
+        versionKey: false,
     },
-    email: {
-      type: String,
-      required: true,
-    },
-    isFavourite: {
-      type: Boolean,
-      default: false,
-    },
-    contactType: {
-      type: String,
-      enum: ['work', 'home', 'personal'],
-      required: true,
-      default: 'personal',
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: 'users',
-    },
-    photo: {
-      type: String,
-    },
-  },
-  {
-    timestamps: true,
-  },
 );
 
-const ContactCollection = model('contact', contactSchema);
-export const contactSortFields = [
-  'name',
-  'phoneNumber',
-  'email',
-  'isFavourite',
-  'contactType',
-];
-export default ContactCollection;
+export const ContactsCollection = model('contacts', contactsSchema);

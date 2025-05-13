@@ -1,18 +1,25 @@
-import Joi from "joi";
-import { typeList } from "../constants/contacts.js";
+import Joi from 'joi';
+import { contactType } from '../constants/contacts.js';
+import { isValidObjectId } from 'mongoose';
 
-export const contactAddSchema = Joi.object({
-    name: Joi.string().min(3).max(20).required(),
-    phoneNumber: Joi.string().min(3).max(20).required(),
-    email: Joi.string().email().min(3).max(20),
-    isFavourite: Joi.boolean(),
-    contactType: Joi.string().valid(...typeList).min(3).max(20).required(),
+export const createContactSchema = Joi.object({
+  name: Joi.string().min(3).max(20).required(),
+  phoneNumber: Joi.string().min(3).max(20).required(),
+  email: Joi.string().min(3).max(20),
+  isFavourite: Joi.boolean(),
+  contactType: Joi.string().valid(...contactType),
+  userId: Joi.string().custom((value, helper) => {
+    if (value && !isValidObjectId(value)) {
+      return helper.message('User id should be a valid mongo id');
+    }
+    return true;
+  }),
 });
 
-export const contactUpdateSchema = Joi.object({
-    name: Joi.string().min(3).max(20),
-    phoneNumber: Joi.string().min(3).max(20),
-    email: Joi.string().email().min(3).max(20),
-    isFavourite: Joi.boolean(),
-    contactType: Joi.string().valid(...typeList).min(3).max(20),
+export const updateContactSchema = Joi.object({
+  name: Joi.string().min(3).max(20),
+  phoneNumber: Joi.string().min(3).max(20),
+  email: Joi.string().min(3).max(20),
+  isFavourite: Joi.boolean(),
+  contactType: Joi.string().valid(...contactType),
 });

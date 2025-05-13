@@ -1,28 +1,49 @@
-import { Router } from "express";
-import { validateBody } from "../middlewares/validateBody.js";
+import { Router } from 'express';
+import { validateBody } from '../middlewares/validateBody.js';
 import {
-    loginUserController,
-    logoutUserController,
-    refreshUserSessionController,
-    registerUserController,
-    resetPasswordController,
-    sendResetEmailController
-} from "../controllers/auth.js";
-import { ctrlWrapper } from "../utils/ctrlWrapper.js";
-import { loginUserSchema, registerUserSchema, resetPasswordSChema, sendResetEmailSchema } from "../validation/auth.js";
+  loginUserSchema,
+  registerUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
+} from '../validation/auth.js';
+import { ctrlController } from '../utils/ctrlWrapper.js';
+import {
+  loginUserController,
+  logoutUserController,
+  refreshUserSessionController,
+  registerUserController,
+  requestResetEmailController,
+  resetPasswordController,
+} from '../controllers/auth.js';
 
 const router = Router();
 
-router.post('/register', validateBody(registerUserSchema), ctrlWrapper(registerUserController));
+router.post(
+  '/register',
+  validateBody(registerUserSchema),
+  ctrlController(registerUserController),
+);
 
-router.post('/login', validateBody(loginUserSchema), ctrlWrapper(loginUserController));
+router.post(
+  '/login',
+  validateBody(loginUserSchema),
+  ctrlController(loginUserController),
+);
 
-router.post('/refresh', ctrlWrapper(refreshUserSessionController));
+router.post('/refresh', ctrlController(refreshUserSessionController));
 
-router.post('/logout', ctrlWrapper(logoutUserController));
+router.post('/logout', ctrlController(logoutUserController));
 
-router.post('/send-reset-email', validateBody(sendResetEmailSchema), ctrlWrapper(sendResetEmailController));
+router.post(
+  '/send-reset-email',
+  validateBody(requestResetEmailSchema),
+  ctrlController(requestResetEmailController),
+);
 
-router.post('/reset-pwd', validateBody(resetPasswordSChema), ctrlWrapper(resetPasswordController));
+router.post(
+  '/reset-pwd',
+  validateBody(resetPasswordSchema),
+  ctrlController(resetPasswordController),
+);
 
 export default router;

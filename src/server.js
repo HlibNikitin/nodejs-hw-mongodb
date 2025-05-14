@@ -1,23 +1,24 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import { getEnvVar } from './utils/getEnvVar.js';
+import dotenv from 'dotenv';
 import router from './routers/index.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import cookieParser from 'cookie-parser';
-import { UPLOAD_DIR } from './constants/contacts.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
-const PORT = Number(getEnvVar('PORT', '3000'));
+dotenv.config();
 
-export const setupServer = () => {
+const PORT = Number(process.env.PORT);
+
+export const startServer = () => {
   const app = express();
 
   app.use(express.json());
-
   app.use(cors());
-
   app.use(cookieParser());
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(
     pino({
@@ -29,9 +30,7 @@ export const setupServer = () => {
 
   app.use(router);
 
-  app.use('/uploads', express.static(UPLOAD_DIR));
-
-  app.use('*', notFoundHandler);
+  app.get('*', notFoundHandler);
 
   app.use(errorHandler);
 

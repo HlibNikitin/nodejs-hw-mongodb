@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import {
-  getAllContactsController,
-  getContactByIdController,
-  createContactController,
-  patchContactController,
   deleteContactController,
+  getAllContactController,
+  getContactByIdController,
+  newContactController,
+  updateContactController,
 } from '../controllers/contacts.js';
-import { ctrlController } from '../utils/ctrlWrapper.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import {
   createContactSchema,
@@ -20,15 +20,15 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get('/', ctrlController(getAllContactsController));
+router.get('/', ctrlWrapper(getAllContactController));
 
-router.get('/:contactId', isValidId, ctrlController(getContactByIdController));
+router.get('/:contactId', isValidId, ctrlWrapper(getContactByIdController));
 
 router.post(
   '/',
   upload.single('photo'),
   validateBody(createContactSchema),
-  ctrlController(createContactController),
+  ctrlWrapper(newContactController),
 );
 
 router.patch(
@@ -36,13 +36,9 @@ router.patch(
   upload.single('photo'),
   isValidId,
   validateBody(updateContactSchema),
-  ctrlController(patchContactController),
+  ctrlWrapper(updateContactController),
 );
 
-router.delete(
-  '/:contactId',
-  isValidId,
-  ctrlController(deleteContactController),
-);
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
 
 export default router;

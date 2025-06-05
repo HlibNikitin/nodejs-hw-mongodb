@@ -1,0 +1,72 @@
+tags:
+  - Contacts
+summary: Create contact
+operationId: createContact
+description: 'Create a contact with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - email
+          - contactType
+        properties:
+          name:
+            description: 'Full name of the contact'
+            type: string
+            example: 'John Doe'
+
+          phoneNumber:
+            description: 'Phone number of the contact'
+            type: string
+            example: '+380987654321'
+
+          email:
+            description: 'Email address of the contact'
+            type: string
+            example: 'john.doe@example.com'
+
+          isFavourite:
+            description: 'Whether the contact is marked as favourite'
+            type: boolean
+            example: true
+
+          contactType:
+            description: 'Type of contact (e.g. personal, work)'
+            type: string
+            enum: [work, home, personal]
+            example: 'personal'
+
+          photo:
+            description: "URL to contact's photo"
+            type: string
+            format: binary
+            example: 'https://res.cloudinary.com/demo/image/upload/photo.png'
+responses:
+  '201':
+    description: Creates a contact
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully created a contact!
+            data:
+              type: object
+              $ref: '../../components/schemas/contact.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'

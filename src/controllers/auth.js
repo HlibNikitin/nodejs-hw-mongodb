@@ -100,8 +100,3 @@ export const getGoogleOAuthUrlController = async (req, res) => {
     },
   });
 };
-// src/routers/auth.js
-
-import { getGoogleOAuthUrlController } from '../controllers/auth.js';
-
-router.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
